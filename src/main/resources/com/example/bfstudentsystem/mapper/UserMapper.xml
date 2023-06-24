@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- UserMapper.xml -->
+
+<mapper namespace="com.example.bfstudentsystem.mapper.UserMapper">
+    <insert id="addUser">
+        insert into db_account (email, username, password, sex, type)
+        values (#{email}, #{username}, #{password}, #{sex}, #{type})
+    </insert>
+    <update id="updateUser">
+        update db_account
+        <set>
+            <if test='user.type != null'>type = #{user.type},</if>
+            <if test='user.sex != null'>sex = #{user.sex},</if>
+            <if test='user.username != null'>username = #{user.username},</if>
+            <if test='user.password != null'>password = #{user.password},</if>
+            <if test='user.email != null'>email = #{user.email},</if>
+            <if test='user.nickname != null'>nickname = #{user.nickname},</if>
+            <if test='user.birthday != null'>birthday = #{user.birthday},</if>
+        </set>
+        where id = #{user.id}
+    </update>
+    <delete id="deleteUser" parameterType="arraylist">
+        delete
+        from db_account
+        where id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <select id="findUser" resultType="com.example.bfstudentsystem.entity.user.AccountUser">
+        SELECT * FROM db_account
+        <where>
+            <if test='userId != null and userId != ""'>
+                AND id &gt; #{userId}
+            </if>
+            <if test='user.type != null and user.type != ""'>AND type = #{user.type}</if>
+            <if test='user.sex != null and user.sex != ""'>AND sex = #{user.sex}</if>
+            <if test='keyword != null and keyword != ""'>
+                AND (username LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+            </if>
+        </where>
+    </select>
+</mapper>

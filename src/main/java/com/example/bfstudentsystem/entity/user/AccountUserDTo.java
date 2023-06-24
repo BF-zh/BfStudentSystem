@@ -1,22 +1,19 @@
 package com.example.bfstudentsystem.entity.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.time.LocalDate;
 
 /**
  * @author bf
- */
+ * @date 2023/6/24
+ **/
 @Data
-public class AccountUser {
+public class AccountUserDTo {
     int id;
     String username;
     String email;
-    @JsonIgnore
-    String password;
     int type;
     LocalDate birthday;
     int sex;
-    String nickname;
 }
