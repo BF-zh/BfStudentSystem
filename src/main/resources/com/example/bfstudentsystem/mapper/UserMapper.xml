@@ -5,9 +5,9 @@
 <!-- UserMapper.xml -->
 
 <mapper namespace="com.example.bfstudentsystem.mapper.UserMapper">
-    <insert id="addUser">
-        insert into db_account (email, username, password, sex, type)
-        values (#{email}, #{username}, #{password}, #{sex}, #{type})
+    <insert id="addUser" parameterType="com.example.bfstudentsystem.entity.user.AccountUser">
+        INSERT INTO db_account (username, email, password, type, birthday, sex, nickname)
+        VALUES (#{username}, #{email}, #{password}, #{type}, #{birthday}, #{sex}, #{nickname})
     </insert>
     <update id="updateUser">
         update db_account
@@ -30,17 +30,48 @@
             #{id}
         </foreach>
     </delete>
+
     <select id="findUser" resultType="com.example.bfstudentsystem.entity.user.AccountUser">
         SELECT * FROM db_account
         <where>
-            <if test='userId != null and userId != ""'>
-                AND id &gt; #{userId}
+            <if test='userType != null and userType != ""'>
+                AND type &lt; #{userType}
             </if>
             <if test='user.type != null and user.type != ""'>AND type = #{user.type}</if>
             <if test='user.sex != null and user.sex != ""'>AND sex = #{user.sex}</if>
             <if test='keyword != null and keyword != ""'>
-                AND (username LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+                AND (nickname LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
+            </if>
+        </where>
+        ORDER BY id
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+    <select id="countUsers" resultType="int">
+        SELECT COUNT(*) FROM db_account
+        <where>
+            <if test='userType != null and userType != ""'>
+                AND type &lt; #{userType}
+            </if>
+            <if test='user.type != null and user.type != ""'>AND type = #{user.type}</if>
+            <if test='user.sex != null and user.sex != ""'>AND sex = #{user.sex}</if>
+            <if test='keyword != null and keyword != ""'>
+                AND (nickname LIKE CONCAT('%', #{keyword}, '%') OR id = #{keyword})
             </if>
         </where>
     </select>
+        <resultMap id="UserResultMap" type="com.example.bfstudentsystem.entity.user.UserResult">
+            <result property="count" column="total_count"/>
+            <collection property="list" ofType="com.example.bfstudentsystem.entity.user.AccountUser">
+                <id property="id" column="id"/>
+                <result property="username" column="username"/>
+                <result property="email" column="email"/>
+                <!-- 添加其他属性映射 -->
+                <result property="password" column="password"/>
+                <result property="type" column="type"/>
+                <result property="birthday" column="birthday"/>
+                <result property="sex" column="sex"/>
+                <result property="nickname" column="nickname"/>
+            </collection>
+        </resultMap>
 </mapper>
+

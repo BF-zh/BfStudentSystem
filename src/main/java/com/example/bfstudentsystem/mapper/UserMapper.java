@@ -2,9 +2,11 @@ package com.example.bfstudentsystem.mapper;
 
 import com.example.bfstudentsystem.entity.auth.Account;
 import com.example.bfstudentsystem.entity.user.AccountUser;
+import com.example.bfstudentsystem.entity.user.UserResult;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author bf
@@ -23,11 +25,11 @@ public interface UserMapper {
     @Update("update db_account set password = #{password} where email = #{email}")
     int resetPasswordByEmail(String password, String email);
 
-    List<AccountUser> findUser(@Param("user") AccountUser user, @Param("keyword") String keyword, @Param("userId") int userId);
-
+    List<AccountUser> findUser(Map<String, Object> paramMap);
+    int countUsers(Map<String, Object> paramMap);
     int deleteUser(int[] ids);
 
-    int addUser(String email, String username, String password, int sex, int type);
+    int addUser(AccountUser user);
 
     int updateUser(@Param("user") AccountUser user);
 

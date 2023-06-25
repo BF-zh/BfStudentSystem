@@ -2,10 +2,12 @@ package com.example.bfstudentsystem.controller;
 
 import com.example.bfstudentsystem.entity.RestBean;
 import com.example.bfstudentsystem.entity.user.AccountUser;
+import com.example.bfstudentsystem.entity.user.UserResult;
 import com.example.bfstudentsystem.service.UserService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -23,21 +25,19 @@ public class UserController {
     }
 
     @GetMapping("/list")
-    public RestBean<List<AccountUser>> list(AccountUser user, String keyword, @SessionAttribute("account") AccountUser me) {
-        System.out.println(user);
-        System.out.println(keyword);
-        return RestBean.success(userService.findUser(user, keyword, me.getId()));
+    public RestBean<UserResult> list(AccountUser user, String keyword, int limit, int page, @SessionAttribute("account") AccountUser me) {
+        return RestBean.success(userService.findUser(user, keyword,limit,page,me.getType()));
     }
 
     @PostMapping("/add")
-    public RestBean<String> adduser(String email, String username, String password, int sex, int type) {
-        if (userService.accountExists(username)) {
+    public RestBean<String> adduser(AccountUser user) {
+        if (userService.accountExists(user.getUsername())) {
             return RestBean.fail(400, "用户名已存在");
         }
-        if (userService.accountExists(email)) {
+        if (userService.accountExists(user.getEmail())) {
             return RestBean.fail(400, "邮箱已存在");
         }
-        if (userService.addUser(email, username, password, sex, type)) {
+        if (userService.addUser(user)) {
             return RestBean.success("添加成功");
         }
         return RestBean.fail(400, "添加失败");
@@ -45,8 +45,12 @@ public class UserController {
     }
 
     @PostMapping("/delete")
-    public RestBean<String> deleteUser(int[] ids) {
-        if (userService.delUser(ids)) {
+    public RestBean<String> deleteUser(@RequestParam("ids") String ids) {
+        int[] idArray = Arrays.stream(ids.split(","))
+                .mapToInt(Integer::parseInt)
+                .toArray();
+        System.out.println(idArray);
+        if (userService.delUser(idArray)) {
             return RestBean.success("删除成功");
         }
         return RestBean.fail(400, "删除失败");

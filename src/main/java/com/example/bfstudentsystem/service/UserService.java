@@ -1,15 +1,14 @@
 package com.example.bfstudentsystem.service;
 
 import com.example.bfstudentsystem.entity.user.AccountUser;
-
-import java.util.List;
+import com.example.bfstudentsystem.entity.user.UserResult;
 
 /**
  * @author bf
  * @date 2023/6/24
  **/
 public interface UserService {
-    List<AccountUser> findUser(AccountUser user, String keyword, int userId);
+    UserResult findUser(AccountUser user, String keyword, int limit, int offset, int userType);
 
     boolean delUser(int[] ids);
 
@@ -19,5 +18,5 @@ public interface UserService {
 
     boolean accountExists(String user);
 
-    boolean addUser(String email, String username, String password, int sex, int type);
+    boolean addUser(AccountUser user);
 }
